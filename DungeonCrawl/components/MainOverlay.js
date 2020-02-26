@@ -10,7 +10,7 @@ export default function MainOverlay(props) {
             <Overlay
                 overlayStyle={{height: 100, backgroundColor: '#7c7f8f'}}
                 isVisible={props.visible}
-                onBackdropPress={() => props.toggleVisible()}
+                onBackdropPress={() => props.toggleVisible('initialIsVisible')}
             >
                 <View>
                     <Text style={{
@@ -31,7 +31,7 @@ export default function MainOverlay(props) {
                             backgroundColor: '#42465e',
                         }}
                         title="Enter Dungeon"
-                        onPress={() => props.toggleVisible()}
+                        onPress={() => props.toggleVisible('initialIsVisible')}
                         />
                     </ThemeProvider>
                 </View>

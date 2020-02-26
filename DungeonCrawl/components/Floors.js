@@ -19,6 +19,8 @@ export default function Floors(props) {
                             <Button key={floor}
                             containerStyle={{
                                 marginVertical: 15,
+                                // shadowOpacity: 1,
+                                // shadowOffset: {width: 0, height: 1}
                             }}
                             buttonStyle={{
                                 height: 150,
@@ -50,7 +52,7 @@ export default function Floors(props) {
                         />
                         );
                     }
-                    else if (floor < props.currentFloor) {
+                    else if (floor < props.currentFloor || props.currentFloor === undefined) {
                         return (
                             <Button key={floor}
                             containerStyle={{
@@ -90,6 +92,9 @@ export default function Floors(props) {
                         <Button key={floor}
                             containerStyle={{
                                 marginVertical: 15,
+                                shadowOpacity: 1,
+                                shadowRadius: 6,
+                                shadowOffset: {width: 0, height: 1}
                             }}
                             buttonStyle={{
                                 height: 200,
@@ -118,6 +123,7 @@ export default function Floors(props) {
                                     }}
                                 />
                             }
+                            onPress={() => props.selectFloor()}
                         />
                     );
                 })}

@@ -24,7 +24,7 @@ export default function MainHeader(props) {
                     source={logoBanner}
                     style={{ width: 255, height: 50 }}
                 />}
-                rightComponent={<Icon type='font-awesome-5' name='dungeon' underlayColor='#42465e' color='#7c7f8f' onPress={() => {props.toggleVisible()}} />}
+                rightComponent={<Icon type='font-awesome-5' name='dungeon' underlayColor='#42465e' color='#7c7f8f' onPress={() => {props.toggleVisible('initialIsVisible')}} />}
             />
         </View>
     );
