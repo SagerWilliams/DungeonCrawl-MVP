@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
-import { Platform, Text, View } from 'react-native';
+import { Platform, Text, View, ScrollView } from 'react-native';
 import {Header, Button, Overlay, ThemeProvider, Icon, registerCustomIconType} from 'react-native-elements';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 registerCustomIconType('font-awesome-5', FontAwesome5);
 
-import HudItem from './components/HudItem.js';
+import MainHeader from './components/MainHeader.js';
+import MainOverlay from './components/MainOverlay.js';
+import ItemStatHud from './components/ItemStatHud.js';
+import StatHud from './components/StatHud.js';
+import Floors from './components/Floors.js';
 
 export default class App extends Component {
   constructor(props) {
@@ -12,92 +16,60 @@ export default class App extends Component {
 
     this.state = {
       initialIsVisible: true,
-      health: 100,
+      level: 1,
+      xp: 0,
+      health: 70,
       defence: 1,
       attack: 1,
       coins: 5,
+      potions: 1,
+      floors: [1,2,3,4,5,6,7,8,9,10],
+      currentFloor: 5,
     };
+
+    this.toggleVisible = this.toggleVisible.bind(this);
+    this.usePotion = this.usePotion.bind(this);
+    this.levelUp = this.levelUp.bind(this);
   }
+
+  toggleVisible() {
+    this.setState({initialIsVisible: !this.state.initialIsVisible});
+  }
+
+  levelUp() {
+    if (this.state.xp >= 100) {
+      this.setState({xp: this.state.xp - 100, level: this.state.level + 1})
+    }
+  }
+
+  usePotion() {
+    if (this.state.potions) {
+      if (this.state.health > 75) {
+        return;
+      }
+      this.setState({potions: this.state.potions - 1, health: this.state.health + 25});
+      return;
+    }
+    if (this.state.coins >= 10) {
+      this.setState({coins: this.state.coins - 10, potions: this.state.potions + 1}, () => {
+        this.usePotion();
+      });
+      return;
+    }
+  }
+
   render() {
     return (
       <View style={{
         height: '100%',
-        backgroundColor: '#e9e9f2',
+        backgroundColor: '#7c7f8f',
       }}>
-        <Overlay
-          overlayStyle={{height: 100, backgroundColor: '#e9e9f2'}}
-          isVisible={this.state.initialIsVisible}
-          onBackdropPress={() => this.setState({ initialIsVisible: false })}
-        >
-          <View>
-            <Text style={{
-              color: '#42465e',
-              fontFamily: 'Trebuchet MS',
-              justifyContent: 'center',
-              alignItems: 'center',
-              fontSize: 20,
-              textAlign: 'center',
-              margin: 10,
-            }}>
-              Welcome to DungeonCrawl!
-            </Text>
-            <ThemeProvider theme={theme}>
-              <Button
-                buttonStyle={{
-                  backgroundColor: '#42465e',
-                }}
-                title="Enter Dungeon"
-                onPress={() => this.setState({ initialIsVisible: false })}
-              />
-            </ThemeProvider>
-          </View>
-        </Overlay>
-        <Header
-          containerStyle={{
-            // height: 125,
-            backgroundColor: '#42465e',
-            justifyContent: 'space-around',
-          }}
-          
-          // leftComponent={}
-          centerComponent={{ text: 'DungeonCrawl', style: { fontFamily: 'Trebuchet MS', color: '#e6a825', fontSize: 25, fontWeight: 'bold'},  }}
-          rightComponent={<Icon type='font-awesome-5' name='dungeon' underlayColor='#42465e' color='#7c7f8f' onPress={() => {this.setState({ initialIsVisible: true })}} />}
-        />
-        <Header
-          containerStyle={{
-            height: 50,
-            position: 'relative',
-            top: -1,
-            paddingTop: 0,
-            backgroundColor: '#42465e',
-            justifyContent: 'space-around',
-          }}
-          
-          // leftComponent={}
-          centerComponent={
-            <View style={{
-              display: 'flex',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-            }}>
-              <HudItem name={'heartbeat'} color={'#d64545'} text={this.state.health} />
-              <HudItem name={'shield-alt'} color={'#555ded'} text={this.state.defence} />
-              <HudItem name={'fist-raised'} color={'#d64545'} text={this.state.attack} />
-              <HudItem name={'coins'} color={'#e6a825'} text={this.state.coins} />
-            </View>
-          }
-          // rightComponent={}
-        />
+        <MainOverlay visible={this.state.initialIsVisible} toggleVisible={this.toggleVisible} />
+        <MainHeader toggleVisible={this.toggleVisible} />
+        <ItemStatHud coins={this.state.coins} potions={this.state.potions} xp={this.state.xp} usePotion={this.usePotion} />
+        <StatHud health={this.state.health} defence={this.state.defence} attack={this.state.attack} level={this.state.level} />
+        <Floors floors={this.state.floors} currentFloor={this.state.currentFloor} />
       </View>
     );
   }
-}
-
-const theme = {
-  Button: {
-    titleStyle: {
-      fontFamily: 'Trebuchet MS', 
-      color: '#e6a825',
-    },
-  },
 }
