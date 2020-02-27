@@ -69,7 +69,7 @@ export default class App extends Component {
   }
   
   skillCheck() {
-    let percentChange = .075;
+    let percentChange = .1;
     this.setState({
       skillCheckOn: !this.state.skillCheckOn
     }, () => {

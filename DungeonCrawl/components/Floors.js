@@ -7,7 +7,8 @@ registerCustomIconType('font-awesome-5', FontAwesome5);
 export default function Floors(props) {
     return (
         <View>
-            <ScrollView style={{
+            <ScrollView
+            style={{
                 height: '75%',
             }}
             contentContainerStyle={{
