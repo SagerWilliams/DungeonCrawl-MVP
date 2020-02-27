@@ -6,6 +6,7 @@ registerCustomIconType('font-awesome-5', FontAwesome5);
 
 import MainHeader from './components/MainHeader.js';
 import MainOverlay from './components/MainOverlay.js';
+import SkillCheckOverlay from './components/SkillCheckOverlay.js';
 import FloorOverlay from './components/FloorOverlay.js';
 import LevelupOverlay from './components/LevelupOverlay.js';
 import ItemStatHud from './components/ItemStatHud.js';
@@ -18,6 +19,11 @@ export default class App extends Component {
 
     this.state = {
       initialIsVisible: true,
+      skillCheckOverlay: false,
+      skillCheckOn: false,
+      skillCheckTop: true,
+      skillCheckPercent: 0,
+      skillCheckResult: 0,
       floorOverlayVisible: false,
       levelOverlayVisible: false,
       level: 1,
@@ -27,7 +33,7 @@ export default class App extends Component {
       attack: 1,
       coins: 5,
       potions: 1,
-      floors: [1,2,3,4,5,6,7,8,9,10],
+      floors: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
       currentFloor: 1,
       rewards: {
         xp: 0,
@@ -42,6 +48,8 @@ export default class App extends Component {
     this.levelUp = this.levelUp.bind(this);
     this.chooseAttribute = this.chooseAttribute.bind(this);
     this.usePotion = this.usePotion.bind(this);
+    this.gameOver = this.gameOver.bind(this);
+    this.skillCheck = this.skillCheck.bind(this);
   }
 
   toggleVisible(toggle) {
@@ -49,13 +57,92 @@ export default class App extends Component {
     target[toggle] = !this.state[toggle];
     this.setState(target);
   }
+  
+  skillCheck() {
+    let percentChange = .075;
+    this.setState({
+      skillCheckOn: !this.state.skillCheckOn
+    }, () => {
+      if (this.state.skillCheckOn) {
+        let interval = setInterval(() => {
+          if (!this.state.skillCheckOn) {
+            clearInterval(interval);
+            return;
+          }
+          if (this.state.skillCheckTop && this.state.skillCheckPercent <= 1) {
+            this.setState({
+              skillCheckPercent: this.state.skillCheckPercent+=percentChange
+            }, () => {
+              if (this.state.skillCheckPercent >= 1) {
+                this.setState({
+                  skillCheckTop: false
+                });
+              }
+            });
+          } else {
+            this.setState({
+              skillCheckTop: false
+            }, () => {
+              this.setState({
+                skillCheckPercent: this.state.skillCheckPercent-=percentChange
+              }, () => {
+                if (this.state.skillCheckPercent <= 0) {
+                  this.setState({
+                    skillCheckTop: true
+                  });
+                }
+              });
+            });
+          }
+        }, 50);
+      } else {
+        setTimeout(() => {
+          this.setState({
+            skillCheckOn: false,
+            // skillCheckPercent: 0,
+            skillCheckTop: true,
+            skillCheckOverlay: false,
+          }, () => {
+            if (this.state.skillCheckPercent >= .47 && this.state.skillCheckPercent <= .53) {
+              this.setState({
+                skillCheckPercent: 0,
+                skillCheckResult: 1
+              }, () => {
+                this.selectFloor();
+                return;
+              });
+            } else if (this.state.skillCheckPercent >= .33 && this.state.skillCheckPercent < .47 ||
+                      this.state.skillCheckPercent > .53 && this.state.skillCheckPercent <= .67) {
+              this.setState({
+                skillCheckPercent: 0,
+                skillCheckResult: 1
+              }, () => {
+                this.selectFloor();
+                return;
+              });
+            } else if (this.state.skillCheckPercent >= 0 && this.state.skillCheckPercent < .33 ||
+                      this.state.skillCheckPercent > .67 && this.state.skillCheckPercent <= 1) {
+              this.setState({
+                skillCheckPercent: 0,
+                skillCheckResult: 1
+              }, () => {
+                this.selectFloor();
+                return;
+              });
+            }
+          });
+          return;
+        }, 1000);
+      }
+    });
+  }
 
   selectFloor() {
     this.setState({
       rewards: {
-        xp: Math.round(Math.random() * 50),
-        health: Math.round(Math.random() * 25),
-        coins: Math.round(Math.random() * 5),
+        xp: Math.ceil(this.state.skillCheckResult * Math.round(Math.random() * 50)),
+        health: Math.round(Math.random() * 25) + 1 - (this.state.defence),
+        coins: Math.ceil(this.state.skillCheckResult * (Math.round(Math.random() * 5) + this.state.attack)),
       },
       currentFloor: this.state.floors[this.state.currentFloor],
     }, () => {
@@ -66,6 +153,9 @@ export default class App extends Component {
   }
 
   applyRewards() {
+    if ((this.state.health - this.state.rewards.health) <= 0) {
+      this.gameOver();
+    }
     this.setState({
       health: this.state.health - this.state.rewards.health,
       xp: this.state.xp + this.state.rewards.xp,
@@ -93,10 +183,7 @@ export default class App extends Component {
   chooseAttribute(attribute) {
     let levelup = {}
     levelup[attribute] = this.state[attribute] + 1;
-    console.log(levelup)
-    this.setState(levelup, () => {
-      console.log(this.state[attribute], levelup)
-    });
+    this.setState(levelup);
   }
 
   usePotion() {
@@ -115,6 +202,10 @@ export default class App extends Component {
     }
   }
 
+  gameOver() {
+    console.log('MAKE ME WORK PLEASE :)')
+  }
+
   render() {
     return (
       <View style={{
@@ -122,12 +213,13 @@ export default class App extends Component {
         backgroundColor: '#7c7f8f',
       }}>
         <MainOverlay visible={this.state.initialIsVisible} toggleVisible={this.toggleVisible} />
+        <SkillCheckOverlay skillCheck={this.skillCheck} skillCheckPercent={this.state.skillCheckPercent} visible={this.state.skillCheckOverlay} toggleVisible={this.toggleVisible} />
         <FloorOverlay rewards={this.state.rewards} applyRewards={this.applyRewards} visible={this.state.floorOverlayVisible} toggleVisible={this.toggleVisible} />
         <LevelupOverlay chooseAttribute={this.chooseAttribute} visible={this.state.levelOverlayVisible} toggleVisible={this.toggleVisible} />
         <MainHeader toggleVisible={this.toggleVisible} />
         <ItemStatHud coins={this.state.coins} potions={this.state.potions} xp={this.state.xp} usePotion={this.usePotion} />
         <StatHud health={this.state.health} defence={this.state.defence} attack={this.state.attack} level={this.state.level} />
-        <Floors selectFloor={this.selectFloor} floors={this.state.floors} currentFloor={this.state.currentFloor} />
+        <Floors toggleVisible={this.toggleVisible} floors={this.state.floors} currentFloor={this.state.currentFloor} />
       </View>
     );
   }

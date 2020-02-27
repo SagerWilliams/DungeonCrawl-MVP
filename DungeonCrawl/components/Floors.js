@@ -17,10 +17,10 @@ export default function Floors(props) {
                     if (floor > props.currentFloor) {
                         return (
                             <Button key={floor}
+                            
                             containerStyle={{
                                 marginVertical: 15,
-                                // shadowOpacity: 1,
-                                // shadowOffset: {width: 0, height: 1}
+                                opacity: .85
                             }}
                             buttonStyle={{
                                 height: 150,
@@ -30,6 +30,7 @@ export default function Floors(props) {
                                 borderWidth: 5,
                                 borderColor: '#545978',
                                 borderRadius: 20,
+
                             }}
                             titleStyle={{
                                 fontFamily: 'Trebuchet MS',
@@ -37,7 +38,7 @@ export default function Floors(props) {
                                 color: '#e6a825',
                                 textAlign: 'center'
                             }}
-                            title={'Floor ' + floor}
+                            // title={'Floor ' + floor}
                             icon={
                                 <Icon
                                     type='font-awesome-5'
@@ -57,6 +58,7 @@ export default function Floors(props) {
                             <Button key={floor}
                             containerStyle={{
                                 marginVertical: 15,
+                                opacity: .85
                             }}
                             buttonStyle={{
                                 width: 150,
@@ -73,11 +75,11 @@ export default function Floors(props) {
                                 color: '#e6a825',
                                 textAlign: 'center'
                             }}
-                            title={'Floor ' + floor}
+                            // title={'Floor ' + floor}
                             icon={
                                 <Icon
                                     type='font-awesome-5'
-                                    name='medal'
+                                    name='check'
                                     underlayColor='#42465e'
                                     color='#e6a825'
                                     iconStyle={{
@@ -108,22 +110,23 @@ export default function Floors(props) {
                             titleStyle={{
                                 fontFamily: 'Trebuchet MS',
                                 fontWeight: 'bold',
+                                fontSize: 30,
                                 color: '#e6a825',
                                 textAlign: 'center'
                             }}
                             title={'Floor ' + floor}
-                            icon={
-                                <Icon
-                                    type='font-awesome-5'
-                                    name='map-marker-alt'
-                                    underlayColor='#42465e'
-                                    color='#e6a825'
-                                    iconStyle={{
-                                        marginRight: 5
-                                    }}
-                                />
-                            }
-                            onPress={() => props.selectFloor()}
+                            // icon={
+                            //     <Icon
+                            //         type='font-awesome-5'
+                            //         name='map-marker-alt'
+                            //         underlayColor='#42465e'
+                            //         color='#e6a825'
+                            //         iconStyle={{
+                            //             marginRight: 5
+                            //         }}
+                            //     />
+                            // }
+                            onPress={() => props.toggleVisible('skillCheckOverlay')}
                         />
                     );
                 })}
@@ -131,3 +134,4 @@ export default function Floors(props) {
         </View>
     );
 }
+
