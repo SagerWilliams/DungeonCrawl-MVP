@@ -116,15 +116,15 @@ export default function Floors(props) {
                             }}
                             title={'Floor ' + floor}
                             // icon={
-                            //     <Icon
-                            //         type='font-awesome-5'
-                            //         name='map-marker-alt'
-                            //         underlayColor='#42465e'
-                            //         color='#e6a825'
-                            //         iconStyle={{
-                            //             marginRight: 5
-                            //         }}
-                            //     />
+                                // <Icon
+                                //     type='font-awesome-5'
+                                //     name='map-marker-alt'
+                                //     underlayColor='#42465e'
+                                //     color='#e6a825'
+                                //     iconStyle={{
+                                //         marginRight: 5
+                                //     }}
+                                // />
                             // }
                             onPress={() => props.toggleVisible('skillCheckOverlay')}
                         />

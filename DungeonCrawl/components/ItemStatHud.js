@@ -40,7 +40,7 @@ export default function ItemStatHud(props) {
                             marginBottom: 5,
                             color: '#e6a825',
                         }}>xp</Text>
-                        <Progress.Bar progress={props.xp/100} width={200} color={'#e6a825'} />
+                        <Progress.Bar progress={props.xp/props.xpToLevel} width={200} color={'#e6a825'} />
                     </View>
                 }
                 rightComponent={

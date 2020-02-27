@@ -6,6 +6,7 @@ registerCustomIconType('font-awesome-5', FontAwesome5);
 
 import MainHeader from './components/MainHeader.js';
 import MainOverlay from './components/MainOverlay.js';
+import DeathOverlay from './components/DeathOverlay.js';
 import SkillCheckOverlay from './components/SkillCheckOverlay.js';
 import FloorOverlay from './components/FloorOverlay.js';
 import LevelupOverlay from './components/LevelupOverlay.js';
@@ -18,22 +19,25 @@ export default class App extends Component {
     super(props);
 
     this.state = {
-      initialIsVisible: true,
+      initialIsVisible: false,
+      deathIsVisible: false,
       skillCheckOverlay: false,
       skillCheckOn: false,
       skillCheckTop: true,
       skillCheckPercent: 0,
       skillCheckResult: 0,
+      skillCheckHealth: 0,
       floorOverlayVisible: false,
       levelOverlayVisible: false,
       level: 1,
+      xpToLevel: 100,
       xp: 0,
       health: 100,
       defence: 1,
       attack: 1,
       coins: 5,
       potions: 1,
-      floors: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+      floors: [1,2,3,4,5,6,7,8,9,10],
       currentFloor: 1,
       rewards: {
         xp: 0,
@@ -43,6 +47,7 @@ export default class App extends Component {
     };
 
     this.toggleVisible = this.toggleVisible.bind(this);
+    this.resetGame = this.resetGame.bind(this);
     this.selectFloor = this.selectFloor.bind(this);
     this.applyRewards = this.applyRewards.bind(this);
     this.levelUp = this.levelUp.bind(this);
@@ -50,6 +55,11 @@ export default class App extends Component {
     this.usePotion = this.usePotion.bind(this);
     this.gameOver = this.gameOver.bind(this);
     this.skillCheck = this.skillCheck.bind(this);
+    this.addFloors = this.addFloors.bind(this);
+  }
+
+  componentDidMount() {
+    this.setState({stateCopy: this.state});
   }
 
   toggleVisible(toggle) {
@@ -99,14 +109,15 @@ export default class App extends Component {
         setTimeout(() => {
           this.setState({
             skillCheckOn: false,
-            // skillCheckPercent: 0,
+            skillCheckResult: 0,
             skillCheckTop: true,
             skillCheckOverlay: false,
           }, () => {
             if (this.state.skillCheckPercent >= .47 && this.state.skillCheckPercent <= .53) {
               this.setState({
                 skillCheckPercent: 0,
-                skillCheckResult: 1
+                skillCheckResult: 2,
+                skillCheckHealth: 1
               }, () => {
                 this.selectFloor();
                 return;
@@ -115,7 +126,8 @@ export default class App extends Component {
                       this.state.skillCheckPercent > .53 && this.state.skillCheckPercent <= .67) {
               this.setState({
                 skillCheckPercent: 0,
-                skillCheckResult: 1
+                skillCheckResult: 1.75,
+                skillCheckHealth: 1.25
               }, () => {
                 this.selectFloor();
                 return;
@@ -124,7 +136,8 @@ export default class App extends Component {
                       this.state.skillCheckPercent > .67 && this.state.skillCheckPercent <= 1) {
               this.setState({
                 skillCheckPercent: 0,
-                skillCheckResult: 1
+                skillCheckResult: 1,
+                skillCheckHealth: 1.75
               }, () => {
                 this.selectFloor();
                 return;
@@ -140,12 +153,15 @@ export default class App extends Component {
   selectFloor() {
     this.setState({
       rewards: {
-        xp: Math.ceil(this.state.skillCheckResult * Math.round(Math.random() * 50)),
-        health: Math.round(Math.random() * 25) + 1 - (this.state.defence),
-        coins: Math.ceil(this.state.skillCheckResult * (Math.round(Math.random() * 5) + this.state.attack)),
+        xp: Math.ceil(this.state.skillCheckResult * Math.round(Math.random() * 25)),
+        health: Math.ceil(this.state.skillCheckHealth * Math.round(Math.random() * 25) + 1 - (this.state.defence)),
+        coins: Math.floor(this.state.skillCheckResult * (Math.round(Math.random() * 2) + (this.state.attack / 2))),
       },
       currentFloor: this.state.floors[this.state.currentFloor],
     }, () => {
+      if (!(this.state.currentFloor % 10)) {
+        this.addFloors();
+      }
       this.setState({
         floorOverlayVisible: !this.state.floorOverlayVisible,
       });
@@ -155,6 +171,7 @@ export default class App extends Component {
   applyRewards() {
     if ((this.state.health - this.state.rewards.health) <= 0) {
       this.gameOver();
+      return;
     }
     this.setState({
       health: this.state.health - this.state.rewards.health,
@@ -171,8 +188,9 @@ export default class App extends Component {
   }
 
   levelUp() {
-    if (this.state.xp >= 100) {
+    if (this.state.xp >= this.state.xpToLevel) {
       this.setState({
+        xpToLevel: this.state.xpToLevel + 75,
         xp: this.state.xp - 100,
         level: this.state.level + 1,
         levelOverlayVisible: true
@@ -202,8 +220,48 @@ export default class App extends Component {
     }
   }
 
+  addFloors() {
+    let newFloors = [];
+    for (let i = this.state.floors.length + 1; i < this.state.floors.length + 11; i++) {
+      newFloors.push(i);
+    }
+    this.setState({floors: this.state.floors.concat(newFloors)});
+  }
+
   gameOver() {
-    console.log('MAKE ME WORK PLEASE :)')
+    if ((this.state.health - this.state.rewards.health ) <= 0 || this.state.health <= 0) {
+      this.toggleVisible('deathIsVisible');
+    }
+  }
+
+  resetGame() {
+    this.setState({
+      initialIsVisible: true,
+      deathIsVisible: false,
+      skillCheckOverlay: false,
+      skillCheckOn: false,
+      skillCheckTop: true,
+      skillCheckPercent: 0,
+      skillCheckResult: 0,
+      skillCheckHealth: 0,
+      floorOverlayVisible: false,
+      levelOverlayVisible: false,
+      level: 1,
+      xpToLevel: 100,
+      xp: 0,
+      health: 100,
+      defence: 1,
+      attack: 1,
+      coins: 5,
+      potions: 1,
+      floors: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+      currentFloor: 1,
+      rewards: {
+        xp: 0,
+        health: 0,
+        coins: 0,
+      },
+    });
   }
 
   render() {
@@ -213,11 +271,12 @@ export default class App extends Component {
         backgroundColor: '#7c7f8f',
       }}>
         <MainOverlay visible={this.state.initialIsVisible} toggleVisible={this.toggleVisible} />
+        <DeathOverlay visible={this.state.deathIsVisible} resetGame={this.resetGame} />
         <SkillCheckOverlay skillCheck={this.skillCheck} skillCheckPercent={this.state.skillCheckPercent} visible={this.state.skillCheckOverlay} toggleVisible={this.toggleVisible} />
         <FloorOverlay rewards={this.state.rewards} applyRewards={this.applyRewards} visible={this.state.floorOverlayVisible} toggleVisible={this.toggleVisible} />
         <LevelupOverlay chooseAttribute={this.chooseAttribute} visible={this.state.levelOverlayVisible} toggleVisible={this.toggleVisible} />
         <MainHeader toggleVisible={this.toggleVisible} />
-        <ItemStatHud coins={this.state.coins} potions={this.state.potions} xp={this.state.xp} usePotion={this.usePotion} />
+        <ItemStatHud xpToLevel={this.state.xpToLevel} coins={this.state.coins} potions={this.state.potions} xp={this.state.xp} usePotion={this.usePotion} />
         <StatHud health={this.state.health} defence={this.state.defence} attack={this.state.attack} level={this.state.level} />
         <Floors toggleVisible={this.toggleVisible} floors={this.state.floors} currentFloor={this.state.currentFloor} />
       </View>
