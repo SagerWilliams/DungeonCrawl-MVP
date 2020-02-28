@@ -33,7 +33,7 @@ export default function StatHud(props) {
                     }}>
                         <HudItem name={'heartbeat'} color={'#d64545'} text={props.health} />
                         <HudItem name={'user-alt'} color={'#555ded'} text={props.level} />
-                        <HudItem name={'shield-alt'} color={'#555ded'} text={props.defence} />
+                        <HudItem name={'shield-alt'} color={'#555ded'} text={props.defense} />
                         <HudItem name={'fist-raised'} color={'#d64545'} text={props.attack} />
                     </View>
                 }

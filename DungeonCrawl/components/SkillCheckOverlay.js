@@ -23,7 +23,7 @@ export default function SkillCheckOverlay(props) {
                         margin: 10,
                         fontWeight: 'bold'
                     }}>
-                        Skill Check
+                        Attempt Floor:
                     </Text>
                     <Text style={{
                         color: '#42465e',
@@ -44,6 +44,7 @@ export default function SkillCheckOverlay(props) {
                             marginBottom: 20,
                             backgroundColor: '#545978'
                         }}
+                        // animated={false}
                         // indeterminate={true}
                         progress={props.skillCheckPercent}
                         width={315}

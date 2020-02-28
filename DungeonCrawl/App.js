@@ -33,7 +33,7 @@ export default class App extends Component {
       xpToLevel: 100,
       xp: 0,
       health: 100,
-      defence: 1,
+      defense: 1,
       attack: 1,
       coins: 5,
       potions: 1,
@@ -56,10 +56,6 @@ export default class App extends Component {
     this.gameOver = this.gameOver.bind(this);
     this.skillCheck = this.skillCheck.bind(this);
     this.addFloors = this.addFloors.bind(this);
-  }
-
-  componentDidMount() {
-    this.setState({stateCopy: this.state});
   }
 
   toggleVisible(toggle) {
@@ -117,7 +113,7 @@ export default class App extends Component {
               this.setState({
                 skillCheckPercent: 0,
                 skillCheckResult: 2,
-                skillCheckHealth: 1
+                skillCheckHealth: .75
               }, () => {
                 this.selectFloor();
                 return;
@@ -154,7 +150,7 @@ export default class App extends Component {
     this.setState({
       rewards: {
         xp: Math.ceil(this.state.skillCheckResult * Math.round(Math.random() * 25)),
-        health: Math.ceil(this.state.skillCheckHealth * Math.round(Math.random() * 25) + 1 - (this.state.defence)),
+        health: Math.ceil(this.state.skillCheckHealth * Math.round(Math.random() * 25) + 1 - (this.state.defense)),
         coins: Math.floor(this.state.skillCheckResult * (Math.round(Math.random() * 2) + (this.state.attack / 2))),
       },
       currentFloor: this.state.floors[this.state.currentFloor],
@@ -250,7 +246,7 @@ export default class App extends Component {
       xpToLevel: 100,
       xp: 0,
       health: 100,
-      defence: 1,
+      defense: 1,
       attack: 1,
       coins: 5,
       potions: 1,
@@ -277,7 +273,7 @@ export default class App extends Component {
         <LevelupOverlay chooseAttribute={this.chooseAttribute} visible={this.state.levelOverlayVisible} toggleVisible={this.toggleVisible} />
         <MainHeader toggleVisible={this.toggleVisible} />
         <ItemStatHud xpToLevel={this.state.xpToLevel} coins={this.state.coins} potions={this.state.potions} xp={this.state.xp} usePotion={this.usePotion} />
-        <StatHud health={this.state.health} defence={this.state.defence} attack={this.state.attack} level={this.state.level} />
+        <StatHud health={this.state.health} defense={this.state.defense} attack={this.state.attack} level={this.state.level} />
         <Floors toggleVisible={this.toggleVisible} floors={this.state.floors} currentFloor={this.state.currentFloor} />
       </View>
     );

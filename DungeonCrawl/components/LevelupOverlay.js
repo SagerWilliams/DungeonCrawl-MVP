@@ -49,10 +49,10 @@ export default function FloorOverlay(props) {
                             backgroundColor: '#42465e',
                             width: 100
                         }}
-                        title="Defence"
+                        title="Defense"
                         onPress={() => {
                             props.toggleVisible('levelOverlayVisible');
-                            props.chooseAttribute('defence');
+                            props.chooseAttribute('defense');
                         }}
                         />
                         <Button

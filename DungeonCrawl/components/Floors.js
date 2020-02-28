@@ -8,12 +8,12 @@ export default function Floors(props) {
     return (
         <View>
             <ScrollView
-            style={{
-                height: '75%',
-            }}
-            contentContainerStyle={{
-                alignItems: 'center'
-            }}>
+                style={{
+                    height: '75%',
+                }}
+                contentContainerStyle={{
+                    alignItems: 'center'
+                }}>
                 {props.floors.map(floor => {
                     if (floor > props.currentFloor) {
                         return (
